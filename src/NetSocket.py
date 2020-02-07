@@ -36,9 +36,20 @@ class NetSocket:
 		return bytes(text, "UTF-8")
 
 	# Sets connection or binding
+	# Is persistent on DEALER connections
 	def open_connection(self, ip):
 		if(self.type == "DEALER"):
-			self.sock.connect((ip, self.port))
+			CONNECTED = False
+
+			# Persistent connection
+			while(not CONNECTED):
+				try:
+					self.sock.connect((ip, self.port))
+					CONNECTED = True
+				except ConnectionRefusedError:
+					continue
+
+
 			self.traffic_thread = KThread(target=self.handle_receives_dealer)
 			self.traffic_thread.start()
 		elif(self.type == "ROUTER"):

@@ -5,6 +5,9 @@ from kthread import KThread
 from threading import Lock
 
 class NetSocket:
+	receive_threads = {}
+	traffic_thread = None
+
 	def __init__(self, t="DEALER"):
 		self.type = t  # "DEALER" or "ROUTER"
 		self.sock = socket(AF_INET, SOCK_STREAM)
@@ -16,8 +19,6 @@ class NetSocket:
 		if(self.type == "ROUTER"):
 			self.ips = []
 			self.clients = []
-			self.receive_threads = {}
-			self.traffic_thread = None
 
 		if(t != "DEALER" and t != "ROUTER"):
 			raise SocketTypeError(t)
@@ -71,8 +72,8 @@ class NetSocket:
 
 	# Receives message from other connection
 	def recv(self):
-		while(1):
-			try:
+		try:
+			while(1):
 				if(self.type == "DEALER"):
 					if(self.receive_buffer == []):
 						self.LOCK.acquire()
@@ -89,8 +90,8 @@ class NetSocket:
 
 					message, client = self.receive_buffer.pop(0)
 					return (self.__crypt(message.decode()), client)
-			except:
-				continue
+		except KeyboardInterrupt:
+			self.close()
 
 	# KTHREADED
 	# Handles connection traffic
@@ -146,6 +147,7 @@ class NetSocket:
 			self.clients.remove(client)
 			if(self.LOCK.locked()):
 				self.LOCK.release()
+			print(f"{client} Disconnected")
 			return True
 
 		elif(message == "<CLOSING>" and self.type == "DEALER"):

@@ -129,3 +129,5 @@ dmypy.json
 .pyre/
 
 src/WordEmbeddings.txt
+
+test_set.txt

@@ -139,9 +139,3 @@ class InvalidDeviceName(Exception):
 class UnsetName(Exception):
 	def __str__(self):
 		return f"Device must have a name and a target set"
-
-a = Device({'name':'test', 'target':'You'})
-b = a.serialize()
-b = Device.deserialize(b)
-c = Device(b)
-print(c)

@@ -7,6 +7,10 @@ import sys
 
 from Path import Path
 
+'''
+Speech Recognition module. Run whenever speech is detected in Sky
+'''
+
 class SpeechRecognition:
 	exception_phrases = ["What?", "I didn't undestand", "What did you say?", "What was that?"]
 

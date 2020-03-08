@@ -10,6 +10,9 @@ class Path:
 	def __str__(self):
 		return self.path
 
+	def __neg__(self):
+		return self.path
+
 	def __repr__(self):
 		return self.path
 

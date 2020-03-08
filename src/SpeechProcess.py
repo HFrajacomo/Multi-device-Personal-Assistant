@@ -1,6 +1,11 @@
 import pyttsx3
 import sys
 
+'''
+Instantiation of a voice call. Everytime Sky opens a voice speech command,
+this script is run in a new process
+'''
+
 text = " ".join(sys.argv[1:])
 
 # TTS Engine

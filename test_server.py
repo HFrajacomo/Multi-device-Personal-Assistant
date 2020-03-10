@@ -25,15 +25,16 @@ try:
 				print(Device.devices)
 
 			else:
-				target = Device.devices.get(client_to_name[client], False)
-				if(target == False):
+				print(message)
+				d = Device.devices.get(client_to_name[client], False)
+				if(d == False):
 					target = client
-				elif(name_to_client.get(target.target, False) == False):
+				elif(name_to_client.get(d.target, False) == False):
 					target = client
 				else:
-					target = name_to_client[target.target]
+					target = name_to_client[d.target]
 
-				s.send(message,  target)
+				s.send(message, target)
 		message = None
 except KeyboardInterrupt:
 	s.close()

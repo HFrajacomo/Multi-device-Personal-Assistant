@@ -10,6 +10,7 @@ s = NetSocket()
 s.open_connection("192.168.0.30")
 device = Device({'name':'WinDesktop', 'target':'phone'})
 
+s.send(device.serialize())
 s.send("Hello")
 print(s.recv().decode())
 

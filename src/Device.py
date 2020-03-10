@@ -45,10 +45,7 @@ class Device:
 
 	# Registers device to devices
 	def register(self):
-		if(self.name in Device.devices.keys()):
-			raise InvalidDeviceName(name)
-		else:
-			Device.devices[self.name] = self
+		Device.devices[self.name] = self
 
 	# Returns device from devices
 	@staticmethod
@@ -126,14 +123,6 @@ class DeviceNotRegistered(Exception):
 
 	def __str__(self):
 		return f"Device {self.message} is not registered in known_devices.txt file"
-
-# Raises on not defining iip or eip
-class InvalidDeviceName(Exception):
-	def __init__(self, name):
-		self.message = str(name)
-
-	def __str__(self):
-		return f"Device {self.message} is already registered"
 
 # Raises on not defining name
 class UnsetName(Exception):

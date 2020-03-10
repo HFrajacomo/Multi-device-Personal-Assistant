@@ -4,11 +4,13 @@ sys.path.append('src\\')
 sys.path.append('src/')
 
 from NetSocket import *
+from Device import *
 
 s = NetSocket()
 s.open_connection("192.168.0.30")
+device = Device({'name':'WinDesktop', 'target':'phone'})
 
-s.send("Hello world")
+s.send(device.serialized())
 print(s.recv().decode())
 
 s.close()

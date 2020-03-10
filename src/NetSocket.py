@@ -117,7 +117,7 @@ class NetSocket:
 	# Receives all data from clients and puts them on receive_buffer
 	def handle_receives_dealer(self):
 		while(1):
-			message = self.sock.recv(4096)
+			message = self.sock.recv(4096).decode()
 			if(self.socket_control(message, None)):
 				continue
 
@@ -130,7 +130,7 @@ class NetSocket:
 	def handle_receives_router(self, client):
 		try:
 			while(client in self.clients):
-				message = client.recv(4096)
+				message = client.recv(4096).decode()
 				if(self.socket_control(message, client)):
 					continue
 

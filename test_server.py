@@ -11,7 +11,13 @@ s.open_connection("0.0.0.0")
 message = None
 server_device = Device({'name':'Sky_server', 'target':'None'})
 name_to_client = {}
-client_to_name = {}
+
+# Gets the name of a client
+def map_client(client):
+	for k in name_to_client.keys():
+		if(name_to_client[k] == client):
+			return k
+
 
 try:
 	while(1):
@@ -21,12 +27,10 @@ try:
 				d = Device(Device.deserialize(message))
 				d.register()
 				name_to_client[d.name] = client
-				client_to_name[client] = d.name
-				print(Device.devices)
 
 			else:
 				print(message)
-				d = Device.devices.get(client_to_name[client], False)
+				d = Device.devices.get(map_client(client), False)
 				if(d == False):
 					target = client
 				elif(name_to_client.get(d.target, False) == False):

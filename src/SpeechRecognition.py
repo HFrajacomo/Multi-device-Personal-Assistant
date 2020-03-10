@@ -39,29 +39,32 @@ class SpeechRecognition:
 				return recognized_text
 		except KeyboardInterrupt:
 			self.close()
-			sys.exit()
+			raise SpeechRecognitionError()
 
 	# KThreaded to recognize audio
 	def audio_thread(self):
 		while(1):
-			with sr.Microphone() as source:
-				print("Speak")
-				audio = self.client.listen(source)
-				try:
-					self.text = self.client.recognize_google(audio)
-					if(self.text == None):
-						self.text = self.__get_exception()
-				except:
+			try:
+				with sr.Microphone() as source:
+					audio = self.client.listen(source)
 					try:
-						self.text = self.client.recognize_sphinx(audio)
+						self.text = self.client.recognize_google(audio)
 						if(self.text == None):
 							self.text = self.__get_exception()
-
 					except:
-						self.text = "Something is wrong with my Speech Recognition"
+						try:
+							self.text = self.client.recognize_sphinx(audio)
+							if(self.text == None):
+								self.text = self.__get_exception()
 
-				if(self.LOCK.locked()):
-					self.LOCK.release()
+						except:
+							self.text = "Something is wrong with my Speech Recognition"
+
+					if(self.LOCK.locked()):
+						self.LOCK.release()
+			except KeyboardInterrupt:
+				self.close()
+				raise SpeechRecognitionError()
 
 	# Closes all thread activity
 	def close(self):
@@ -75,11 +78,9 @@ class SpeechRecognition:
 	def __get_exception(self):
 		return self.exception_phrases[randint(0,len(self.exception_phrases)-1)]
 
-microfone = SpeechRecognition()
-try:
-	while(1):
-		text = microfone.recv_text()
-		print(text)
-except KeyboardInterrupt:
-	microfone.close()
-	sys.exit()
+
+# Raises on invalid type definition
+class SpeechRecognitionError(Exception):
+
+	def __str__(self):
+		return f"Something went wrong in the SpeechRecognizer"

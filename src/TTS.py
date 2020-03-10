@@ -18,7 +18,6 @@ class TTS:
 	# Adds speech to speech queue
 	def speak(self, text):
 		self.queue.append(text)
-		print(f"Added: {text}")
 
 	# KTHREADED runs proccess initiator for speech
 	def __process_creator(self):
@@ -38,4 +37,8 @@ class TTS:
 
 	# Kills thread on deletion
 	def delete(self):
+		self.thread.kill()
+
+	# Kills thread on deletion
+	def close(self):
 		self.thread.kill()

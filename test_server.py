@@ -22,6 +22,7 @@ try:
 				d.register()
 				name_to_client[d.name] = client
 				client_to_name[client] = d.name
+				print(Device.devices)
 
 			else:
 				target = Device.devices.get(client_to_name[client], False)

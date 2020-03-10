@@ -91,7 +91,7 @@ class Device:
 			else:
 				self.eip = sp.check_output(["curl ifconfig.me"], universal_newlines=True)
 		except:
-			self.eip == ''
+			self.eip = ''
 
 	def __str__(self):
 		return f"Device: {self.name}\nInternal IP: {self.iip}\nExternal IP: {self.eip}\nTarget: {self.target}\n"		

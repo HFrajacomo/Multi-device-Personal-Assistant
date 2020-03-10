@@ -15,6 +15,8 @@ class NetSocket:
 		self.port = 33000
 		self.receive_buffer = []
 		self.LOCK = Lock()
+		self.ip_table = {}  # IP to Client Convertion
+
 
 		if(self.type == "ROUTER"):
 			self.ips = []
@@ -103,6 +105,7 @@ class NetSocket:
 				self.ips.append(client_address)
 				print(f"{client_address} Connected")
 				print(len(self.clients))
+				self.ip_table[client_address[0]] = client
 
 				if(client in self.receive_threads.keys()):
 					self.receive_threads[client].kill()
@@ -180,7 +183,13 @@ class NetSocket:
 			self.clients.remove(client)
 			self.receive_threads[client].kill()
 
-
+	# Checks if a tuple of (eip, iip) exists in self.ip_table and
+	# returns the correct index
+	def ip_search(self, ips):
+		for ip in ips:
+			if(ip in self.ip_table.keys()):
+				return ip
+		return None
 
 # Raises on invalid type definition
 class SocketTypeError(Exception):

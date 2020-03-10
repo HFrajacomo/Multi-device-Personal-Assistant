@@ -22,6 +22,7 @@ def receive_thread():
 	try:
 		while(True):
 			message = s.recv()
+			print(message)
 			tts.speak(message)
 	except KeyboardInterrupt:
 		kill_all()

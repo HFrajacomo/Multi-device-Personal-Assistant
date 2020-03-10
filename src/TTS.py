@@ -29,7 +29,8 @@ class TTS:
 			self.BUSY = True
 
 			if(self.OS == 'nt'):
-				sp.call(["powershell", "python", str(Path("src\\SpeechProcess.py")), str(self.queue.pop(0))], universal_newlines=True)
+				l = ["powershell", "python", str(Path("src\\SpeechProcess.py")), str(self.queue.pop(0))]
+				sp.call(l, universal_newlines=True)
 			else:
 				sp.check_output(["python3", str(Path("src\\SpeechProcess.py")), str(self.queue.pop(0))], universal_newlines=True)
 

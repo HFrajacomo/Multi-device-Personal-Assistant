@@ -18,18 +18,25 @@ def map_client(client):
 		if(name_to_client[k] == client):
 			return k
 
+# Formats string to usable format
+def clean(text):
+	text = text.replace("\'s", " is")
+	text = text.replace("n\'t", " not")
+	return text
 
 try:
 	while(1):
 		message, client = s.recv()
 		if(message != None and message != ""):
+			if(message[0] == "<CLOSING>"):
+				continue
+
 			if(message[0] == "{"):
 				d = Device(Device.deserialize(message))
 				d.register()
 				name_to_client[d.name] = client
 
 			else:
-				print(message)
 				d = Device.devices.get(map_client(client), False)
 				if(d == False):
 					target = client
@@ -38,6 +45,7 @@ try:
 				else:
 					target = name_to_client[d.target]
 
+				message = clean(message)
 				s.send(message, target)
 		message = None
 except KeyboardInterrupt:

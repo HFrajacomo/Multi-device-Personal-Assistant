@@ -12,11 +12,19 @@ Speech Recognition module. Run whenever speech is detected in Sky
 '''
 
 class SpeechRecognition:
-	exception_phrases = ["What?", "I didn't undestand", "What did you say?", "What was that?"]
+	exception_phrases = ["What?", "I did not understand", "What did you say?", "What was that?"]
 
-	def __init__(self):
+	def __init__(self, energy=2000, exception=False):
 		self.client = sr.Recognizer()
 		self.text = ""
+		self.exception = exception
+
+
+		# Adjust Noise
+		#with sr.Microphone() as source:
+		#	self.client.adjust_for_ambient_noise(source)
+
+		self.client.energy_threshold = energy
 
 		self.LOCK = Lock()
 		self.EXIT = False
@@ -36,6 +44,8 @@ class SpeechRecognition:
 
 				recognized_text = self.text
 				self.text = ""
+				recognized_text = self.__clean(recognized_text)
+
 				return recognized_text
 		except KeyboardInterrupt:
 			self.close()
@@ -50,12 +60,18 @@ class SpeechRecognition:
 					try:
 						self.text = self.client.recognize_google(audio)
 						if(self.text == None):
-							self.text = self.__get_exception()
+							if(self.exception):
+								self.text = self.__get_exception()
+							else:
+								continue
 					except:
 						try:
 							self.text = self.client.recognize_sphinx(audio)
 							if(self.text == None):
-								self.text = self.__get_exception()
+								if(self.exception):
+									self.text = self.__get_exception()
+								else:
+									continue
 
 						except:
 							self.text = "Something is wrong with my Speech Recognition"
@@ -65,6 +81,12 @@ class SpeechRecognition:
 			except KeyboardInterrupt:
 				self.close()
 				raise SpeechRecognitionError()
+
+	# Formats string to usable format
+	def __clean(self, text):
+		text = text.replace("\'s", " is")
+		text = text.replace("n\'t", " not")
+		return text
 
 	# Closes all thread activity
 	def close(self):

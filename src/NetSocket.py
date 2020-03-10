@@ -82,7 +82,7 @@ class NetSocket:
 						continue
 
 					message = self.receive_buffer.pop(0)
-					return self.__crypt(message)
+					return self.__crypt(message.decode())
 
 				elif(self.type == "ROUTER"):
 
@@ -116,14 +116,18 @@ class NetSocket:
 	# KTHREADED
 	# Receives all data from clients and puts them on receive_buffer
 	def handle_receives_dealer(self):
-		while(1):
-			message = self.sock.recv(4096)
-			if(self.socket_control(message, None)):
-				continue
+		try:
+			while(1):
+				message = self.sock.recv(4096)
 
-			self.receive_buffer.append(message)
-			if(self.LOCK.locked()):
-				self.LOCK.release()
+				if(self.socket_control(message, None)):
+					continue
+
+				self.receive_buffer.append(message)
+				if(self.LOCK.locked()):
+					self.LOCK.release()
+		except KeyboardInterrupt:
+			return
 
 	# KTHREADED
 	# Receives all data from clients and puts them on receive_buffer
@@ -167,6 +171,9 @@ class NetSocket:
 			self.sock.shutdown(0)
 			self.sock.close()
 			self.traffic_thread.kill()
+			if(self.LOCK.locked()):
+				self.LOCK.release()	
+
 		elif(self.type == "ROUTER"):
 			self.sock.shutdown(0)
 			self.sock.close()

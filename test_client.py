@@ -18,16 +18,18 @@ threads = []
 tts = TTS()
 sr = SpeechRecognition()
 
+# Threads that receives data from server
 def receive_thread():
 	try:
 		while(True):
 			message = s.recv()
-			print(message)
 			tts.speak(message)
+			pass
 	except KeyboardInterrupt:
 		kill_all()
 		sys.exit()
 
+# Thread that sends speech recognized audio to server
 def send_thread():
 	try:
 		while(True):
@@ -36,6 +38,7 @@ def send_thread():
 			if(spoken_text.lower() == "quit"):
 				return
 
+			sleep(1)
 			s.send(spoken_text)
 
 	except KeyboardInterrupt:
@@ -46,8 +49,8 @@ def send_thread():
 		sys.exit()
 		raise SpeechRecognitionError
 
+# Just closes everything
 def kill_all():
-
 	for th in threads:
 		try:
 			th.kill()
@@ -58,23 +61,23 @@ def kill_all():
 	tts.close()
 	sr.close()
 
+# Reconnects to target device
 def connect_hb():
 	sleep(10)
 	s.send(device.serialize())
 
 try:
+	s.send(device.serialize())
 	threads.append(KThread(target=receive_thread))
 	threads.append(KThread(target=send_thread))
 
 	for th in threads:
 		th.start()
 
-	#connect_hb()
+	connect_hb()
 
-	for th in threads:
-		th.join()
-
-	kill_all()
+	while(True):
+		sleep(1)
 
 except KeyboardInterrupt:
 	kill_all()
